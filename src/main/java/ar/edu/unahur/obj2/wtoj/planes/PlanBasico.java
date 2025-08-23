@@ -2,22 +2,26 @@ package ar.edu.unahur.obj2.wtoj.planes;
 
 import java.util.List;
 
-public class PlanBasico implements Planeable{
-    private Integer limite;
+import ar.edu.unahur.obj2.wtoj.contenido.Contenido;
+import ar.edu.unahur.obj2.wtoj.usuario.Usuario;
 
-    public PlanBasico(Integer limite){
-        this.limite = limite
+public class PlanBasico implements PlanSuscribible {
+    private Integer limite;
+    private Double costoBase;
+    private Double costoFinal;
+
+    public PlanBasico(Integer limite, Double costoBase) {
+        this.limite = limite;
+        this.costoBase = costoBase;
     }
 
     @Override
-    public Double costoPlan(Usuario usuario){
-        Double costoBase = 5.0;
-        List<Contenido> contenidos = usuario.getContenidos();
-        if (limite >= contenidos.size()) {
-            return costoBase;
-        } else {
-            List<Contenido> excedentes = contenidos.subList(limite -1, contenidos.size());
-            return costoBase + excedentes.stream().mapToDouble(Contenido::costo).sum();
-        }
+    public Double costoPlan(Usuario usuario) {
+        List<Contenido> contenidoUsuario = usuario.getContenidos();
+        List<Contenido> excedentes = contenidoUsuario.subList(limite, contenidoUsuario.size());
+
+        costoFinal = (limite >= contenidoUsuario.size()) ? costoBase + (excedentes.stream().mapToDouble(c -> c.costo()).sum()) : costoBase;
+
+        return costoFinal;
     }
 }
