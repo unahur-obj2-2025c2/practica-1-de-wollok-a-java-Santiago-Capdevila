@@ -1,9 +1,11 @@
 package ar.edu.unahur.obj2.wtoj;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
@@ -14,10 +16,28 @@ import ar.edu.unahur.obj2.wtoj.contenido.Serie;
 import ar.edu.unahur.obj2.wtoj.contenido.Temporada;
 import ar.edu.unahur.obj2.wtoj.planes.PlanBasico;
 
-public class PlataformaTest {
+public class UsuarioTest {
         @Test
-        void testFacturacionMensual() {
-                var u1 = new Usuario();
+        void dadoUnUsuario_conElPlanPremision_SeCalculaCorrectamenteElCostoMensual() {
+
+                var usuario = new Usuario();
+                assertEquals(12.0, usuario.costoMensual());
+
+        }
+
+        @Test
+        void limite() {
+                List<String> cad = Arrays.asList("a", "b", "c", "d");
+                List<String> sub = cad.subList(2, cad.size());
+                assertEquals(2, sub.size());
+                assertTrue(cad.contains("c"));
+                assertTrue(cad.contains("d"));
+                assertFalse(sub.contains("a"));
+                assertFalse(sub.contains("b"));
+        }
+
+        @Test
+        void dadoUnUsuario_alCambiarAlPlanBasico_SeCaculaCorrectamenteElCostoMensualEnFuncionALosContenidosQueSuperanElLimite() {
                 var u2 = new Usuario();
 
                 Contenido docu = new Documental("docu1", 10.0);
@@ -40,16 +60,11 @@ public class PlataformaTest {
                 u2.verContenido(docu);
                 u2.verContenido(serie);
                 u2.setPlan(new PlanBasico(1));
-
-                Plataforma.getIntance().agregarUsuario(u1);
-                Plataforma.getIntance().agregarUsuario(u2);
-
-                assertEquals(62, Plataforma.getIntance().facturacionMensual());
+                assertEquals(50.0, u2.costoMensual());
         }
 
         @Test
-        void limpiarContenidos() {
-                var u1 = new Usuario();
+        void dadoUnUsuario_alCambiarAlPlanBasico_SeCaculaCorrectamenteElCostoMensualEnFuncionALosContenidosSinSuperarElLimite() {
                 var u2 = new Usuario();
 
                 Contenido docu = new Documental("docu1", 10.0);
@@ -71,12 +86,8 @@ public class PlataformaTest {
 
                 u2.verContenido(docu);
                 u2.verContenido(serie);
-                u2.setPlan(new PlanBasico(1));
-
-                Plataforma.getIntance().agregarUsuario(u1);
-                Plataforma.getIntance().agregarUsuario(u2);
-                Plataforma.getIntance().limpiarContenidos();
-                assertTrue(u1.getContendios().isEmpty());
-                assertTrue(u2.getContendios().isEmpty());
+                u2.setPlan(new PlanBasico(2));
+                assertEquals(5.0, u2.costoMensual());
         }
+
 }
